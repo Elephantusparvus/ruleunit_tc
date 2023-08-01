@@ -14,21 +14,23 @@ query isContainedIn( String x, String y )
 end
 
 
-// NOT WORKING unbound query, accessing singletonstore BEFORE query
-rule "Location Inference"
-no-loop
-when
-    $go: /go[this=="go1"]
-    isContainedIn($x, $y;)
-    (not /locations[thing== $x, location== $y, inferred==false])
-then
-    System.out.println($go);
-    System.out.println("Inferred: " + $x + " IN " + $y);
-    Location loc = new Location($x, $y, true);
-    locations.addLogical(loc);
-end
+// // 1) NOT WORKING unbound query, accessing singletonstore BEFORE query
+// rule "Location Inference"
+// no-loop
+// when
+//     $go: /go[this=="go1"]
+//     isContainedIn($x, $y;)
+//     (not /locations[thing== $x, location== $y, inferred==false])
+// then
+//     System.out.println($go);
+//     System.out.println("Inferred: " + $x + " IN " + $y);
+//     Location loc = new Location($x, $y, true);
+//     locations.addLogical(loc);
+// end
 
-//// WORKING completely unbound query
+
+
+// // 2) WORKING completely unbound query
 // rule "Location Inference"
 // no-loop
 // when
@@ -40,7 +42,9 @@ end
 //     locations.addLogical(loc);
 // end
 
-//// WORKING accessing global and bind it to first query arg
+
+
+// // 3) WORKING accessing global and bind it to first query arg
 // rule "Location Inference"
 // no-loop
 // when
@@ -53,7 +57,31 @@ end
 //     locations.addLogical(loc);
 // end
 
-//// WORKING unbound query, accessing singletonstore AFTER query
+
+
+// // 4) WORKING extra rule using insert every location fact in WM, then use "traditional" syntax
+// rule "insert locs"
+// when
+//     $x: Location() from locations
+// then
+//     insert($x);
+// end
+//
+// rule "Location Inference"
+// no-loop
+// when
+//     $x: Location(inferred==false)
+//     isContainedIn($x.thing, $y;)
+//     (not /locations[thing== $x.thing, location== $y, inferred==false])
+// then
+//     System.out.println("Inferred: " + $x.thing + " IN " + $y);
+//     Location loc = new Location($x.thing, $y, true);
+//     locations.addLogical(loc);
+// end
+
+
+
+// // 5) WORKING unbound query, accessing singletonstore AFTER query
 // rule "Location Inference"
 // no-loop
 // when
