@@ -14,15 +14,40 @@ query isContainedIn( String x, String y )
 end
 
 
-// // 1) NOT WORKING unbound query, accessing singletonstore BEFORE query
+// 1) NOT WORKING unbound query, accessing singletonstore BEFORE query
+rule "Location Inference"
+no-loop
+when
+    $go: /go[this=="go1"]
+    isContainedIn($x, $y;)
+    (not /locations[thing== $x, location== $y, inferred==false])
+then
+    System.out.println($go);
+    System.out.println("Inferred: " + $x + " IN " + $y);
+    Location loc = new Location($x, $y, true);
+    locations.addLogical(loc);
+end
+
+// // 2) NOT WORKING one bound parameter after accessing singletonstore with "traditional" syntax (same for OOPATH)
 // rule "Location Inference"
 // no-loop
 // when
-//     $go: /go[this=="go1"]
+//     $x: Location(inferred == false) from locations
+//     isContainedIn($x.thing, $y;)
+//     (not /locations[thing== $x.thing, location== $y, inferred==false])
+// then
+//     System.out.println("Inferred: " + $x.thing + " IN " + $y);
+//     Location loc = new Location($x.thing, $y, true);
+//     locations.addLogical(loc);
+// end
+
+// // 3) WORKING completely unbound query
+// rule "Location Inference"
+// no-loop
+// when
 //     isContainedIn($x, $y;)
 //     (not /locations[thing== $x, location== $y, inferred==false])
 // then
-//     System.out.println($go);
 //     System.out.println("Inferred: " + $x + " IN " + $y);
 //     Location loc = new Location($x, $y, true);
 //     locations.addLogical(loc);
@@ -30,21 +55,7 @@ end
 
 
 
-// // 2) WORKING completely unbound query
-// rule "Location Inference"
-// no-loop
-// when
-//     isContainedIn($x, $y;)
-//     (not /locations[thing== $x, location== $y, inferred==false])
-// then
-//     System.out.println("Inferred: " + $x + " IN " + $y);
-//     Location loc = new Location($x, $y, true);
-//     locations.addLogical(loc);
-// end
-
-
-
-// // 3) WORKING accessing global and bind it to first query arg
+// // 4) WORKING accessing global and bind it to first query arg
 // rule "Location Inference"
 // no-loop
 // when
@@ -59,7 +70,7 @@ end
 
 
 
-// // 4) WORKING extra rule using insert every location fact in WM, then use "traditional" syntax
+// // 5) WORKING extra rule using insert every location fact in WM, then use "traditional" syntax
 // rule "insert locs"
 // when
 //     $x: Location() from locations
@@ -81,7 +92,7 @@ end
 
 
 
-// // 5) WORKING unbound query, accessing singletonstore AFTER query
+// // 6) WORKING unbound query, accessing singletonstore AFTER query
 // rule "Location Inference"
 // no-loop
 // when
