@@ -1,0 +1,5 @@
+<kmodule xmlns="http://www.drools.org/xsd/kmodule">
+  <kbase name="tc-test-session" packages="tc_tests" default="true">
+    <ksession name="tc-test-session" default="true"/>
+  </kbase>
+</kmodule>

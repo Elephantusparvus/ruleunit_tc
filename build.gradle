@@ -1,0 +1,42 @@
+plugins {
+	id 'java'
+}
+
+group = ''
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+	targetCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+    droolsVersion = '8.41.0.Final'
+}
+
+
+dependencies {
+    // https://mvnrepository.com/artifact/org.drools/drools-ruleunits-engine
+	implementation "org.drools:drools-ruleunits-engine:${droolsVersion}"
+	implementation "org.drools:drools-tms:${droolsVersion}"
+	implementation "org.drools:drools-wiring-dynamic:${droolsVersion}"
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+
+    def task = taskGraph.allTasks.find { it.name.endsWith(".main()") }
+
+    if (task instanceof JavaExec) {
+
+        task.executable = task.javaLauncher.get().executablePath.asFile.absolutePath
+
+    }
+}
