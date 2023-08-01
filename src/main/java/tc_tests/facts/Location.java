@@ -55,7 +55,7 @@ public class Location {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.thing.hashCode(), this.location.hashCode(), this.inferred);
+        return Objects.hash(thing, location, inferred);
     }
 
     @Override
